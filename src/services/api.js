@@ -1,7 +1,7 @@
 // src/services/api.js
 import axios from 'axios';
 
-const API_BASE = process.env.REACT_APP_API_URL || 'http://contestbk.vercel.app/';
+const API_BASE = process.env.REACT_APP_API_URL || 'https://contestbk.vercel.app/';
 
 const api = axios.create({
   baseURL: `${API_BASE}/api`,
