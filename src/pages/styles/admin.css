@@ -1,0 +1,74 @@
+/* src/styles/admin.css - admin panel styles (used by AdminLayout and pages) */
+
+.admin-root {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+}
+
+/* Sidebar */
+.admin-sidebar {
+  width: 220px;
+  padding: 18px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  height: calc(100vh - 40px);
+  position: sticky;
+  top: 20px;
+}
+
+.admin-brand {
+  margin: 0;
+  font-size: 18px;
+  color: #111827;
+}
+
+.admin-nav {
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.nav-item {
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #374151;
+  text-decoration: none;
+  display:block;
+}
+
+.nav-item.active {
+  background: #eef2ff;
+  color: #3730a3;
+  font-weight: 700;
+}
+
+.admin-main {
+  flex: 1;
+  min-height: calc(100vh - 40px);
+}
+
+/* Admin page layout */
+.admin-page {
+  padding: 18px;
+}
+
+/* Lists */
+.list-plain { list-style:none; padding:0; margin:0; }
+.user-row, .msg-row, .payment-row, .withdraw-row {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  padding: 12px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.user-name { font-weight: 700; }
+.muted { color: #6b7280; font-size: 13px; }
+
+.users-side { width: 360px; }
+
+/* tiny buttons */
+.small { padding: 6px 8px; font-size: 13px; border-radius: 6px; }

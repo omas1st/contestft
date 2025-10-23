@@ -1,0 +1,380 @@
+/* src/pages/styles/adminlayout.css */
+
+/* CSS Variables for Consistent Theming */
+:root {
+  --admin-primary: #3b82f6;
+  --admin-primary-dark: #2563eb;
+  --admin-primary-light: #60a5fa;
+  --admin-secondary: #64748b;
+  --admin-success: #10b981;
+  --admin-warning: #f59e0b;
+  --admin-error: #ef4444;
+  --admin-background: #f8fafc;
+  --admin-surface: #ffffff;
+  --admin-text-primary: #1e293b;
+  --admin-text-secondary: #64748b;
+  --admin-text-muted: #94a3b8;
+  --admin-border: #e2e8f0;
+  --admin-border-light: #f1f5f9;
+  --admin-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --admin-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --admin-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --admin-radius: 8px;
+  --admin-radius-sm: 6px;
+  --admin-radius-lg: 12px;
+  --admin-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --admin-transition-slow: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reset and Base Styles */
+.admin-root {
+  min-height: 100vh;
+  background: var(--admin-background);
+  display: flex;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  line-height: 1.6;
+  color: var(--admin-text-primary);
+}
+
+/* Sidebar Styles */
+.admin-sidebar {
+  width: 280px;
+  background: var(--admin-surface);
+  border-right: 1px solid var(--admin-border);
+  padding: 0;
+  box-shadow: var(--admin-shadow);
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 1000;
+  transition: var(--admin-transition-slow);
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--admin-primary), var(--admin-success));
+  border-radius: var(--admin-radius) var(--admin-radius) 0 0;
+}
+
+.admin-brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--admin-text-primary);
+  margin: 0;
+  padding: 2rem 1.5rem 1.5rem;
+  background: linear-gradient(135deg, var(--admin-primary), var(--admin-primary-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  border-bottom: 1px solid var(--admin-border-light);
+  position: relative;
+}
+
+.admin-brand::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 1.5rem;
+  right: 1.5rem;
+  height: 2px;
+  background: linear-gradient(90deg, var(--admin-primary), transparent);
+  border-radius: 2px;
+}
+
+/* Navigation Styles */
+.admin-nav {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 0.875rem 1rem;
+  color: var(--admin-text-secondary);
+  text-decoration: none;
+  border-radius: var(--admin-radius-sm);
+  font-weight: 500;
+  transition: var(--admin-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--admin-primary);
+  transform: scaleX(0);
+  transition: var(--admin-transition);
+  border-radius: 0 var(--admin-radius-sm) var(--admin-radius-sm) 0;
+}
+
+.nav-item:hover {
+  color: var(--admin-primary);
+  background: rgba(59, 130, 246, 0.05);
+  transform: translateX(4px);
+}
+
+.nav-item:hover::before {
+  transform: scaleX(1);
+}
+
+.nav-item.active {
+  color: var(--admin-primary);
+  background: rgba(59, 130, 246, 0.1);
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.2);
+}
+
+.nav-item.active::before {
+  transform: scaleX(1);
+  background: var(--admin-primary);
+}
+
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  right: 1rem;
+  width: 6px;
+  height: 6px;
+  background: var(--admin-primary);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+/* Main Content Area */
+.admin-main {
+  flex: 1;
+  margin-left: 280px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--admin-background);
+}
+
+/* Card Component */
+.card {
+  background: var(--admin-surface);
+  border-radius: var(--admin-radius);
+  box-shadow: var(--admin-shadow);
+  border: 1px solid var(--admin-border);
+  transition: var(--admin-transition);
+}
+
+.card:hover {
+  box-shadow: var(--admin-shadow-md);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .admin-sidebar {
+    width: 260px;
+    transform: translateX(-100%);
+  }
+  
+  .admin-sidebar.mobile-open {
+    transform: translateX(0);
+  }
+  
+  .admin-main {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  .mobile-menu-toggle {
+    display: block;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1001;
+    background: var(--admin-primary);
+    color: white;
+    border: none;
+    border-radius: var(--admin-radius-sm);
+    padding: 0.75rem;
+    cursor: pointer;
+    box-shadow: var(--admin-shadow-lg);
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-sidebar {
+    width: 100%;
+    border-right: none;
+  }
+  
+  .admin-nav {
+    padding: 1rem;
+  }
+  
+  .nav-item {
+    padding: 1rem;
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-brand {
+    padding: 1.5rem 1rem 1rem;
+    font-size: 1.25rem;
+  }
+  
+  .admin-nav {
+    padding: 0.75rem;
+    gap: 0.25rem;
+  }
+  
+  .nav-item {
+    padding: 0.875rem 0.75rem;
+  }
+}
+
+/* Scrollbar Styling */
+.admin-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.admin-sidebar::-webkit-scrollbar-track {
+  background: var(--admin-border-light);
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+  background: var(--admin-text-muted);
+  border-radius: 3px;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--admin-text-secondary);
+}
+
+/* Loading States */
+.admin-root.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.admin-root.loading::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  :root {
+    --admin-border: #000000;
+    --admin-text-primary: #000000;
+    --admin-text-secondary: #333333;
+  }
+  
+  .nav-item.active {
+    background: #000000;
+    color: #ffffff;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --admin-transition: none;
+    --admin-transition-slow: none;
+  }
+  
+  .nav-item:hover {
+    transform: none;
+  }
+  
+  .nav-item.active::after {
+    animation: none;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .admin-sidebar {
+    display: none;
+  }
+  
+  .admin-main {
+    margin-left: 0;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --admin-background: #0f172a;
+    --admin-surface: #1e293b;
+    --admin-text-primary: #f1f5f9;
+    --admin-text-secondary: #cbd5e1;
+    --admin-text-muted: #64748b;
+    --admin-border: #334155;
+    --admin-border-light: #1e293b;
+    --admin-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    --admin-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  }
+  
+  .card {
+    background: var(--admin-surface);
+  }
+  
+  .nav-item:hover {
+    background: rgba(59, 130, 246, 0.15);
+  }
+  
+  .nav-item.active {
+    background: rgba(59, 130, 246, 0.2);
+  }
+}
+
+/* Focus Styles for Accessibility */
+.nav-item:focus-visible {
+  outline: 2px solid var(--admin-primary);
+  outline-offset: 2px;
+}
+
+/* Selection Styles */
+::selection {
+  background: rgba(59, 130, 246, 0.2);
+  color: var(--admin-text-primary);
+}
+
+::-moz-selection {
+  background: rgba(59, 130, 246, 0.2);
+  color: var(--admin-text-primary);
+}
