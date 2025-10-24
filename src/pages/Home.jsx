@@ -71,7 +71,7 @@ export default function Home() {
                 <button onClick={() => nav('/rules')} className="rules-button">Read full rules</button>
               </div>
 
-              <div className="contact-info">Need help? Contact: mrbeastcontest@gmail.com</div>
+              <div className="contact-info">Need help? Contact: contestmrbeast@gmail.com</div>
             </aside>
           </div>
         </div>
