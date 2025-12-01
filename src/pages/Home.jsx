@@ -38,10 +38,10 @@ export default function Home() {
 
               <div className="hero-actions">
                 <button onClick={() => nav('/login')} className="btn-primary">
-                  Join as Team Member
+                  Login
                 </button>
                 <button onClick={() => nav('/register')} className="btn-secondary">
-                  Register as Captain
+                  Register
                 </button>
               </div>
 
@@ -81,7 +81,7 @@ export default function Home() {
                   <h5>2. Eligibility</h5>
                   <ul>
                     <li>Must be at least 13 years old.</li>
-                    <li>Must have a valid account on [YouTube or TikTok or Facebook].</li>
+                    <li>Must follow MrBeast on [YouTube or TikTok or Facebook].</li>
                     <li>Employees of MrBeast and their immediate families are ineligible.</li>
                   </ul>
                 </div>
@@ -128,7 +128,7 @@ export default function Home() {
 
               <div className="sidebar-actions">
                 <button onClick={() => nav('/rules')} className="rules-button">View Detailed Rules</button>
-                <div className="contact-info">Need help? Contact: recruitmentrush@mrbeast.com</div>
+                <div className="contact-info">Need help? Contact: mrbeastrecruitmentrush@gmail.com</div>
               </div>
             </aside>
           </div>
