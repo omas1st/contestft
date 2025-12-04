@@ -23,33 +23,25 @@ export default function Home() {
               <h1 className="hero-title">Welcome to the $50,000 Mr Beast Recruitment Rush!</h1>
               <div className="hero-description">
                 <p className="description-paragraph">
-                  We start with ten elite team captains. Each captain has one mission: 
-                  <strong> be the fastest to build a winning team</strong> of five brand-new members 
-                  recruited from anywhere online.
+                  We start with ten team captains. Each captain has one mission: be the fastest to build a team of five brand-new members recruited from anywhere online.
                 </p>
                 <p className="description-paragraph">
-                  The first captain to successfully recruit four verified members wins the grand prize for their entire team! 
-                  <strong> That captain and each of their four new members</strong> will instantly receive 
-                  <strong> $10,000 each</strong>, distributing $50,000 in total prizes to one victorious team.
+                  The first captain to successfully recruit four people wins the grand prize for their entire team! That captain and each of their four new members will instantly receive $10,000 each, crediting $50,000 in total prizes to one winning team.
                 </p>
                 <p className="description-paragraph">
-                  <strong>Speed is absolutely critical!</strong> You only have 72 hours from the start to find your four members. 
-                  Once the money is deposited into your platform wallet, 
-                  <strong> you must withdraw it within 24 hours or forfeit the prize.</strong>
+                  <strong>But speed is key!</strong> You only have 72 hours from the start to find your four members. Once the money is in your platform wallet, you must withdraw it within 24 hours or you will lose it.
                 </p>
                 <p className="description-paragraph">
-                  <strong>Important:</strong> When you join, you must send a direct message to the game's official account 
-                  stating the name of the captain who invited you. This is the only way to ensure you are 
-                  correctly added to their team and become eligible for the prize.
+                  When you join, you must send a direct message to the game's official account stating the name of the captain who invited you. This is the only way to ensure you are correctly added to their team and become eligible for the prize.
                 </p>
               </div>
 
               <div className="hero-actions">
                 <button onClick={() => nav('/login')} className="btn-primary">
-                  Login to Dashboard
+                  Login
                 </button>
                 <button onClick={() => nav('/register')} className="btn-secondary">
-                  Register Now
+                  Register
                 </button>
               </div>
 
@@ -60,7 +52,7 @@ export default function Home() {
                   <div className="stat-value">{teamCaptains}</div>
                 </div>
                 <div className="stat-card">
-                  <div className="stat-label">Total Prize Pool</div>
+                  <div className="stat-label">Total Prize</div>
                   <div className="stat-value">{prize}</div>
                 </div>
                 <div className="stat-card">
@@ -89,9 +81,8 @@ export default function Home() {
                   <h5>2. Eligibility</h5>
                   <ul>
                     <li>Must be at least 13 years old.</li>
-                    <li>Must follow MrBeast on all social platforms.</li>
+                    <li>Must follow MrBeast on [YouTube or TikTok or Facebook].</li>
                     <li>Employees of MrBeast and their immediate families are ineligible.</li>
-                    <li>Previous winners from similar contests within 6 months are ineligible.</li>
                   </ul>
                 </div>
 
@@ -99,8 +90,7 @@ export default function Home() {
                   <h5>3. How to Play</h5>
                   <ul>
                     <li><strong>For Team Captains:</strong> The ten (10) pre-selected captains will be announced at the start of the game. You will have 72 hours to recruit four (4) new players to join your team.</li>
-                    <li><strong>For New Members:</strong> To join a team, you must be recruited by a captain. Upon signing up, you MUST send a direct message via the in-app messenger containing the phrase: "Joined by [Captain's Name]". Failure to do this correctly will result in you not being counted on that captain's team.</li>
-                    <li><strong>Verification:</strong> All members must complete email verification and profile setup to be considered valid recruits.</li>
+                    <li><strong>For New Members:</strong> To join a team, you must be recruited by a captain. Upon signing up, you MUST send a direct message to via the in-app message containing the phrase: "Joined by [Captain's Name]". Failure to do this correctly will result in you not being counted on that captain's team.</li>
                   </ul>
                 </div>
 
@@ -110,7 +100,6 @@ export default function Home() {
                     <li>The victory condition is met the moment the first Team Captain has four (4) registered members who have correctly verified their recruitment via DM.</li>
                     <li>The winning team consists of the one (1) winning Captain and their four (4) verified Members.</li>
                     <li>Each of these five (5) individuals will be credited $10,000 into their platform wallet, for a total prize pool of $50,000.</li>
-                    <li>In case of a tie (multiple teams reaching 4 members simultaneously), the timestamp of the last member's verification message will determine the winner.</li>
                   </ul>
                 </div>
 
@@ -118,9 +107,8 @@ export default function Home() {
                   <h5>5. Prize Claim & Withdrawal</h5>
                   <ul>
                     <li>Prizes will be deposited into the winner's in-app wallet within 1 hour of the winning team being verified.</li>
-                    <li>Winners have 24 hours from the time the prize is deposited to initiate a withdrawal to their designated bank account or payment processor (e.g., PayPal, Stripe).</li>
+                    <li>Winners have 24 hours from the time the prize is deposited to initiate a withdrawal to their designated bank account or payment processor (e.g., PayPal).</li>
                     <li>Failure to withdraw within the 24-hour window will result in the forfeiture of the prize. No exceptions will be made.</li>
-                    <li>Withdrawal processing may take 3-5 business days depending on the payment method.</li>
                   </ul>
                 </div>
 
@@ -130,7 +118,6 @@ export default function Home() {
                     <li>All recruitment must be organic. The use of bots, automated systems, or paid advertising to recruit members is strictly prohibited and will result in immediate disqualification.</li>
                     <li>MrBeast is not responsible for technical errors, failed messages, or user error in the recruitment process.</li>
                     <li>We reserve the right to modify these rules or cancel the game at our discretion, though we are committed to fulfilling the promised prize for the winning team.</li>
-                    <li>All decisions by the game administrators are final and binding.</li>
                   </ul>
                 </div>
 
@@ -140,13 +127,8 @@ export default function Home() {
               </div>
 
               <div className="sidebar-actions">
-                <button onClick={() => nav('/rules')} className="rules-button">View Complete Rules & Regulations</button>
-                <div className="contact-info">
-                  <strong>Need assistance?</strong><br />
-                  Contact our support team:<br />
-                  mrbeastrecruitmentrush@gmail.com<br />
-                  Response time: 24-48 hours
-                </div>
+                <button onClick={() => nav('/rules')} className="rules-button">View Detailed Rules</button>
+                <div className="contact-info">Need help? Contact: mrbeastrecruitmentrush@gmail.com</div>
               </div>
             </aside>
           </div>
