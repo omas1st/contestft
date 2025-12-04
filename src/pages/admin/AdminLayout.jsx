@@ -6,8 +6,8 @@ import '../styles/admin.css';
 export default function AdminLayout() {
   return (
     <div className="admin-root">
-      <aside className="admin-sidebar card">
-        <h3 className="admin-brand">Admin Panel</h3>
+      <header className="admin-topnav">
+        <div className="admin-brand">Admin Panel</div>
         <nav className="admin-nav">
           <NavLink to="/admin/users" className={({isActive}) => isActive ? 'nav-item active' : 'nav-item'}>Users</NavLink>
           <NavLink to="/admin/withdrawals" className={({isActive}) => isActive ? 'nav-item active' : 'nav-item'}>Withdrawals</NavLink>
@@ -15,7 +15,7 @@ export default function AdminLayout() {
           <NavLink to="/admin/messages" className={({isActive}) => isActive ? 'nav-item active' : 'nav-item'}>Messages</NavLink>
           <NavLink to="/admin/notifications" className={({isActive}) => isActive ? 'nav-item active' : 'nav-item'}>Notifications</NavLink>
         </nav>
-      </aside>
+      </header>
 
       <main className="admin-main">
         <Outlet />
