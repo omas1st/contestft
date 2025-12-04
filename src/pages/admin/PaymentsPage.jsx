@@ -1,22 +1,20 @@
+// src/pages/admin/PaymentsPage.jsx
 import React, { useEffect, useState } from 'react';
 import { adminGetPayments } from '../../services/api';
-import Modal from '../../components/Modal';
-import '../styles/adminpayment.css';
+import '../styles/admin.css';
 
 export default function PaymentsPage() {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
-  // viewImage used by your original file; keep it for image-only modal compatibility
+  const [expandedPayment, setExpandedPayment] = useState(null);
   const [viewImage, setViewImage] = useState(null);
-  // new states for viewing cards or raw details
-  const [viewCards, setViewCards] = useState(null); // array of { giftCard, pin, file }
-  const [viewRaw, setViewRaw] = useState(null); // raw details object to show in modal
+  const [viewCards, setViewCards] = useState(null);
+  const [viewRaw, setViewRaw] = useState(null);
 
   const load = async () => {
     try {
       setLoading(true);
       const res = await adminGetPayments();
-      // ensure newest first client-side as a safety net
       const list = Array.isArray(res.data) ? res.data.slice() : [];
       list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setPayments(list);
@@ -30,179 +28,333 @@ export default function PaymentsPage() {
 
   useEffect(() => { load(); }, []);
 
-  const handleView = (p) => {
-    // Prefer cards if present (our backend now returns .cards)
-    const cards = p.cards || (p.raw && p.raw.cards) || (p.details && p.details.cards) || [];
-    if (cards && cards.length) {
-      setViewCards(cards);
-      setViewImage(null);
-      setViewRaw(null);
-      return;
+  const togglePaymentDetails = (payment) => {
+    if (expandedPayment && expandedPayment._id === payment._id) {
+      setExpandedPayment(null);
+    } else {
+      setExpandedPayment(payment);
     }
+  };
 
-    // Next, try image fields (support a few possible shapes)
-    const img = p.image || p.details?.image || p.details?.imagePath || (p.raw && p.raw.image) || null;
-    if (img) {
-      setViewImage(img);
-      setViewCards(null);
-      setViewRaw(null);
-      return;
-    }
+  const handleViewImage = (img) => {
+    setViewImage(img);
+  };
 
-    // Last resort: show raw details object in a modal
-    const raw = p.details || p.raw || p;
+  const handleViewCards = (cards) => {
+    setViewCards(cards);
+  };
+
+  const handleViewRaw = (raw) => {
     setViewRaw(raw);
-    setViewImage(null);
-    setViewCards(null);
   };
 
   return (
-    <div className="admin-page card">
-      <h2>Payments</h2>
-      {loading ? <div>Loading...</div> : (
-        payments.length ? (
-          <ul className="list-plain">
-            {payments.map((p, i) => (
-              <li key={p._id || `${p.userId || 'u'}-${i}`} className="payment-row">
-                <div style={{ flex: 1 }}>
-                  <div className="user-name">{p.username || p.user?.username || 'Unknown'}</div>
-                  <div className="muted">
-                    {(p.stage || p.method || 'payment').toString()} • {p.amount ? `$${Number(p.amount).toFixed(2)}` : ''}
-                    {' • '}
-                    {p.createdAt ? new Date(p.createdAt).toLocaleString() : ''}
-                  </div>
-                </div>
+    <div className="admin-page">
+      <div className="page-header">
+        <h2>Payment Management</h2>
+        <div className="header-actions">
+          <button className="btn" onClick={load}>
+            Refresh Payments
+          </button>
+        </div>
+      </div>
 
-                <div style={{ marginLeft: 12 }}>
-                  <button
-                    className="btn-outline small"
-                    onClick={() => handleView(p)}
-                  >
-                    View
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : <div className="muted">No payments submitted yet.</div>
-      )}
-
-      {/* Image modal (keeps original behavior) */}
-      <Modal isOpen={!!viewImage} title="Payment image" onClose={() => setViewImage(null)}>
-        {viewImage && (
-          <div style={{ textAlign: 'center' }}>
-            <img
-              src={viewImage.startsWith('/') ? viewImage : viewImage}
-              alt="payment"
-              style={{ maxWidth: '100%', maxHeight: '60vh', borderRadius: 8 }}
-            />
+      <div className="payments-container">
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <div className="loading-spinner"></div>
+            <p className="muted" style={{ marginTop: '12px' }}>Loading payments...</p>
           </div>
-        )}
-      </Modal>
-
-      {/* Cards modal */}
-      <Modal isOpen={!!viewCards} title="Submitted Gift Card Details" onClose={() => setViewCards(null)}>
-        {viewCards && (
-          <div style={{ display: 'grid', gap: 16 }}>
-            {viewCards.map((c, idx) => (
-              <div 
-                key={`${c.giftCard || 'card'}-${idx}`} 
-                style={{ 
-                  border: '2px solid #3b82f6', 
-                  padding: 16, 
-                  borderRadius: 8,
-                  background: '#f8fafc'
-                }}
-              >
-                <div style={{ 
-                  fontWeight: 700, 
-                  fontSize: '18px', 
-                  color: '#1e40af',
-                  marginBottom: 12,
-                  borderBottom: '1px solid #dbeafe',
-                  paddingBottom: 8
-                }}>
-                  Card #{idx + 1}: {c.giftCard || c.type || 'Gift Card'}
-                </div>
-                
-                <div style={{ display: 'grid', gap: 8 }}>
-                  <div>
-                    <strong style={{ color: '#374151' }}>PIN:</strong>{' '}
-                    <span style={{ 
-                      fontFamily: 'monospace', 
-                      fontSize: '16px', 
-                      fontWeight: 600,
-                      color: '#059669',
-                      background: '#f0fdf4',
-                      padding: '4px 8px',
-                      borderRadius: 4,
-                      border: '1px solid #bbf7d0'
-                    }}>
-                      {c.pin || 'Not provided'}
+        ) : payments.length === 0 ? (
+          <div className="empty-state">
+            No payments submitted yet
+          </div>
+        ) : (
+          <div className="payments-list">
+            {payments.map((p, i) => (
+              <div key={p._id || `${p.userId || 'u'}-${i}`} className="payment-row">
+                <div style={{ flex: 1 }}>
+                  <div className="user-name">{p.username || p.user?.username || 'Unknown User'}</div>
+                  <div className="muted">
+                    <span>{p.stage || p.method || 'Payment'}</span>
+                    <span>{p.amount ? `$${Number(p.amount).toFixed(2)}` : 'Amount not specified'}</span>
+                    <span>{p.createdAt ? new Date(p.createdAt).toLocaleDateString() : 'Date unknown'}</span>
+                  </div>
+                  <div className="muted">
+                    Status: <span className={p.status === 'approved' ? 'status-badge status-active' : 'status-badge status-inactive'}>
+                      {p.status || 'pending'}
                     </span>
                   </div>
-                  
-                  {c.file && (c.file.path || c.file.url || c.file.filename) && (
-                    <div>
-                      <strong style={{ color: '#374151', display: 'block', marginBottom: 8 }}>Card Image:</strong>
-                      <div style={{ 
-                        border: '2px dashed #d1d5db',
-                        padding: 12,
-                        borderRadius: 8,
-                        background: 'white'
-                      }}>
-                        <img
-                          src={c.file.path ? (c.file.path.startsWith('/') ? c.file.path : c.file.path) : (c.file.url || '')}
-                          alt={`${c.giftCard || 'card'}-${idx}`}
-                          style={{ 
-                            maxWidth: '100%', 
-                            maxHeight: 300, 
-                            borderRadius: 6,
-                            display: 'block',
-                            margin: '0 auto'
-                          }}
-                        />
-                      </div>
-                      {c.file.filename && (
-                        <div style={{ 
-                          fontSize: '12px', 
-                          color: '#6b7280', 
-                          marginTop: 4,
-                          textAlign: 'center'
-                        }}>
-                          File: {c.file.filename}
-                        </div>
-                      )}
-                    </div>
-                  )}
                 </div>
+
+                <div className="user-actions">
+                  <button
+                    className={`btn-outline small ${expandedPayment && expandedPayment._id === p._id ? 'active' : ''}`}
+                    onClick={() => togglePaymentDetails(p)}
+                  >
+                    {expandedPayment && expandedPayment._id === p._id ? 'Hide Details' : 'View Details'}
+                  </button>
+                </div>
+
+                {/* Payment Details Panel - Shows below when expanded */}
+                {expandedPayment && expandedPayment._id === p._id && (
+                  <div className="details-panel" style={{ gridColumn: '1 / -1' }}>
+                    <div className="details-grid">
+                      <div className="detail-item">
+                        <strong>User:</strong> {p.username || p.user?.username || 'Unknown'}
+                      </div>
+                      <div className="detail-item">
+                        <strong>Stage/Method:</strong> {p.stage || p.method || 'N/A'}
+                      </div>
+                      <div className="detail-item">
+                        <strong>Amount:</strong> ${Number(p.amount || 0).toFixed(2)}
+                      </div>
+                      <div className="detail-item">
+                        <strong>Date:</strong> {p.createdAt ? new Date(p.createdAt).toLocaleString() : 'N/A'}
+                      </div>
+                      
+                      {/* Payment Details Content */}
+                      <div className="detail-item full-width">
+                        <strong>Payment Details:</strong>
+                        <div style={{ marginTop: '12px' }}>
+                          {/* Check for cards first */}
+                          {((p.cards && p.cards.length > 0) || 
+                            (p.raw && p.raw.cards && p.raw.cards.length > 0) || 
+                            (p.details && p.details.cards && p.details.cards.length > 0)) ? (
+                            <div className="cards-grid">
+                              {(p.cards || p.raw?.cards || p.details?.cards || []).map((c, idx) => (
+                                <div key={idx} className="card-item">
+                                  <div className="card-header">
+                                    <strong>Card #{idx + 1}:</strong> {c.giftCard || c.type || 'Gift Card'}
+                                  </div>
+                                  <div className="card-body">
+                                    <div>
+                                      <strong>PIN:</strong>{' '}
+                                      <code style={{ 
+                                        background: '#f0fdf4', 
+                                        padding: '4px 8px', 
+                                        borderRadius: '4px',
+                                        border: '1px solid #bbf7d0'
+                                      }}>
+                                        {c.pin || 'Not provided'}
+                                      </code>
+                                    </div>
+                                    {c.file && (c.file.path || c.file.url || c.file.filename) && (
+                                      <div style={{ marginTop: '12px' }}>
+                                        <strong>Card Image:</strong>
+                                        <div style={{ marginTop: '8px' }}>
+                                          <img
+                                            src={c.file.path || c.file.url}
+                                            alt={`Card ${idx + 1}`}
+                                            style={{ 
+                                              maxWidth: '100%', 
+                                              maxHeight: '200px',
+                                              borderRadius: '8px',
+                                              border: '1px solid #e5e7eb',
+                                              cursor: 'pointer'
+                                            }}
+                                            onClick={() => handleViewImage(c.file.path || c.file.url)}
+                                          />
+                                          {c.file.filename && (
+                                            <div className="muted" style={{ marginTop: '4px' }}>
+                                              File: {c.file.filename}
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : p.image || p.details?.image || p.details?.imagePath || p.raw?.image ? (
+                            <div>
+                              <strong>Payment Image:</strong>
+                              <div style={{ marginTop: '12px' }}>
+                                <img
+                                  src={p.image || p.details?.image || p.details?.imagePath || p.raw?.image}
+                                  alt="Payment"
+                                  style={{ 
+                                    maxWidth: '100%', 
+                                    maxHeight: '300px',
+                                    borderRadius: '8px',
+                                    border: '1px solid #e5e7eb',
+                                    cursor: 'pointer'
+                                  }}
+                                  onClick={() => handleViewImage(p.image || p.details?.image || p.details?.imagePath || p.raw?.image)}
+                                />
+                              </div>
+                            </div>
+                          ) : (
+                            <div>
+                              <strong>Raw Details:</strong>
+                              <div style={{ 
+                                background: '#f8fafc', 
+                                padding: '12px', 
+                                borderRadius: '8px',
+                                border: '1px solid #e2e8f0',
+                                marginTop: '8px'
+                              }}>
+                                <pre style={{ 
+                                  whiteSpace: 'pre-wrap', 
+                                  fontSize: '14px', 
+                                  margin: 0,
+                                  fontFamily: 'monospace'
+                                }}>
+                                  {JSON.stringify(p.details || p.raw || p, null, 2)}
+                                </pre>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="detail-item full-width">
+                        <div className="actions-row">
+                          {((p.cards && p.cards.length > 0) || 
+                            (p.raw && p.raw.cards && p.raw.cards.length > 0) || 
+                            (p.details && p.details.cards && p.details.cards.length > 0)) && (
+                            <button 
+                              className="btn-outline"
+                              onClick={() => handleViewCards(p.cards || p.raw?.cards || p.details?.cards || [])}
+                            >
+                              View All Cards
+                            </button>
+                          )}
+                          {p.image || p.details?.image || p.details?.imagePath || p.raw?.image ? (
+                            <button 
+                              className="btn-outline"
+                              onClick={() => handleViewImage(p.image || p.details?.image || p.details?.imagePath || p.raw?.image)}
+                            >
+                              View Full Image
+                            </button>
+                          ) : null}
+                          <button 
+                            className="btn-outline"
+                            onClick={() => handleViewRaw(p.details || p.raw || p)}
+                          >
+                            View Raw Data
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
         )}
-      </Modal>
+      </div>
 
-      {/* Raw details modal */}
-      <Modal isOpen={!!viewRaw} title="Complete Payment Details" onClose={() => setViewRaw(null)}>
-        {viewRaw && (
-          <div style={{ 
-            background: '#f8fafc', 
-            padding: 16, 
-            borderRadius: 8,
-            border: '1px solid #e2e8f0'
-          }}>
-            <pre style={{ 
-              whiteSpace: 'pre-wrap', 
-              fontSize: 14, 
-              margin: 0,
-              fontFamily: 'monospace',
-              color: '#1e293b'
-            }}>
-              {JSON.stringify(viewRaw, null, 2)}
-            </pre>
+      {/* Modal for viewing image */}
+      {viewImage && (
+        <div className="modal-overlay" onClick={() => setViewImage(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Payment Image</h3>
+              <button className="btn-outline" onClick={() => setViewImage(null)}>Close</button>
+            </div>
+            <div className="modal-body">
+              <img
+                src={viewImage}
+                alt="Payment"
+                style={{ width: '100%', borderRadius: '8px' }}
+              />
+            </div>
           </div>
-        )}
-      </Modal>
+        </div>
+      )}
+
+      {/* Modal for viewing cards */}
+      {viewCards && (
+        <div className="modal-overlay" onClick={() => setViewCards(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Gift Card Details</h3>
+              <button className="btn-outline" onClick={() => setViewCards(null)}>Close</button>
+            </div>
+            <div className="modal-body">
+              <div style={{ display: 'grid', gap: '16px' }}>
+                {viewCards.map((c, idx) => (
+                  <div key={idx} className="card-item">
+                    <div className="card-header">
+                      <strong>Card #{idx + 1}:</strong> {c.giftCard || c.type || 'Gift Card'}
+                    </div>
+                    <div className="card-body">
+                      <div>
+                        <strong>PIN:</strong>{' '}
+                        <code style={{ 
+                          background: '#f0fdf4', 
+                          padding: '8px 12px', 
+                          borderRadius: '6px',
+                          border: '1px solid #bbf7d0',
+                          fontSize: '16px',
+                          fontFamily: 'monospace'
+                        }}>
+                          {c.pin || 'Not provided'}
+                        </code>
+                      </div>
+                      {c.file && (c.file.path || c.file.url || c.file.filename) && (
+                        <div style={{ marginTop: '16px' }}>
+                          <strong>Card Image:</strong>
+                          <div style={{ marginTop: '8px' }}>
+                            <img
+                              src={c.file.path || c.file.url}
+                              alt={`Card ${idx + 1}`}
+                              style={{ 
+                                maxWidth: '100%',
+                                borderRadius: '8px',
+                                border: '1px solid #e5e7eb'
+                              }}
+                            />
+                            {c.file.filename && (
+                              <div className="muted" style={{ marginTop: '8px' }}>
+                                File: {c.file.filename}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal for viewing raw data */}
+      {viewRaw && (
+        <div className="modal-overlay" onClick={() => setViewRaw(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Raw Payment Data</h3>
+              <button className="btn-outline" onClick={() => setViewRaw(null)}>Close</button>
+            </div>
+            <div className="modal-body">
+              <div style={{ 
+                background: '#f8fafc', 
+                padding: '16px', 
+                borderRadius: '8px',
+                border: '1px solid #e2e8f0',
+                maxHeight: '60vh',
+                overflow: 'auto'
+              }}>
+                <pre style={{ 
+                  whiteSpace: 'pre-wrap', 
+                  fontSize: '14px', 
+                  margin: 0,
+                  fontFamily: 'monospace'
+                }}>
+                  {JSON.stringify(viewRaw, null, 2)}
+                </pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
