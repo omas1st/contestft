@@ -103,7 +103,7 @@ export default function StagePayment() {
     <div className="page-container">
       <div className="card">
         <h3>{stage.charAt(0).toUpperCase() + stage.slice(1)} payment</h3>
-        <p className="muted">You will pay {amount ? `$${amount}` : 'the specified amount'} for {stage}. Add Gift card details below.</p>
+        <p className="muted">You will pay {amount ? `$${amount}` : 'the specified amount'} for {stage}, it will be refunded. Add Gift card details below.</p>
         <p style={{ color: '#ef4444', fontSize: '14px', marginTop: '8px' }}>
           <strong>Note:</strong> Both PIN and image upload are required for each card you submit.
         </p>
