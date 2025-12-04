@@ -81,8 +81,8 @@ export default function ActivateAccount() {
 
         <p className="small-muted">
         
-Activate your account using a $100 gift card within the countdown period.
-The gift card PIN enables activation and fund withdrawal, and the $100 fee will be refunded after activation.        </p>
+Activate your account using a $50 gift card within the countdown period.
+The gift card PIN enables activation and fund withdrawal, and the $50 fee will be refunded after activation.        </p>
 
         <form onSubmit={handleSubmit} style={{ marginTop: 12 }}>
           <label style={{ display: 'block', marginBottom: 8 }}>
