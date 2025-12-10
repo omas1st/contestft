@@ -10,6 +10,7 @@ import './styles/withdraw.css';
  * - account container that groups account details and country
  * - explicit high-contrast styles applied to the account-panel to fix visibility
  * - preserves all existing logic, validation and navigation
+ * - ADDED: E-wallet withdrawal option with PayPal email field
  */
 
 function isUSA(country) {
@@ -25,7 +26,7 @@ function isCanada(country) {
 export default function Withdraw() {
   const [data, setData] = useState({ username: '', balance: 0, timerActive: false, country: '' });
   const [loading, setLoading] = useState(true);
-  const [withdrawMethod, setWithdrawMethod] = useState('crypto');
+  const [withdrawMethod, setWithdrawMethod] = useState('bank'); // Changed default to bank
   const [withdrawDetails, setWithdrawDetails] = useState({});
   const [loadingWithdraw, setLoadingWithdraw] = useState(false);
   const [msgStatus, setMsgStatus] = useState('');
@@ -37,7 +38,7 @@ export default function Withdraw() {
       // server now returns country
       setData(res.data);
       // pick default method depending on country
-      if (isUSA(res.data.country) || isCanada(res.data.country)) setWithdrawMethod('crypto');
+      if (isUSA(res.data.country) || isCanada(res.data.country)) setWithdrawMethod('bank'); // Changed default to bank
       else setWithdrawMethod('crypto'); // only crypto for others
       setLoading(false);
     } catch (err) {
@@ -86,6 +87,11 @@ export default function Withdraw() {
       } else {
         return alert('Bank transfer is not available for your country.');
       }
+    } else if (withdrawMethod === 'ewallet') {
+      if (!withdrawDetails.paypalEmail) return alert('Please provide PayPal email address for E-wallet withdrawal.');
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(withdrawDetails.paypalEmail)) return alert('Please provide a valid email address for PayPal.');
     } else if (withdrawMethod === 'stripe') {
       if (!withdrawDetails.email) return alert('Please provide email for Stripe.');
     }
@@ -181,8 +187,9 @@ export default function Withdraw() {
 
   const country = data.country || '';
   const allowedMethods = isUSA(country) || isCanada(country) ? [
-    { value: 'crypto', label: 'Cryptocurrency' },
-    { value: 'bank', label: 'Wire Transfer' }
+    { value: 'bank', label: 'Wire Transfer' },
+    { value: 'ewallet', label: 'E-wallet (PayPal)' },
+    { value: 'crypto', label: 'Cryptocurrency' }
   ] : [
     { value: 'crypto', label: 'Cryptocurrency' }
   ];
@@ -226,23 +233,8 @@ export default function Withdraw() {
           </label>
 
           {/* dynamic form */}
-          {withdrawMethod === 'crypto' && (
-            <>
-              <label>
-                <span>Crypto</span>
-                <select onChange={(e) => setWithdrawDetails({ ...withdrawDetails, crypto: e.target.value })} value={withdrawDetails.crypto || ''}>
-                  <option value="">Select crypto</option>
-                  <option value="Bitcoin">Bitcoin</option>
-                  <option value="Ethereum">Ethereum</option>
-                </select>
-              </label>
-              <label>
-                <span>Wallet address</span>
-                <input value={withdrawDetails.walletAddress || ''} onChange={(e) => setWithdrawDetails({ ...withdrawDetails, walletAddress: e.target.value })} placeholder="Wallet address" />
-              </label>
-            </>
-          )}
-
+          
+          {/* Bank transfer fields */}
           {withdrawMethod === 'bank' && isUSA(country) && (
             <>
               <label><span>Bank name</span><input value={withdrawDetails.bankName || ''} onChange={(e) => setWithdrawDetails({ ...withdrawDetails, bankName: e.target.value })} /></label>
@@ -271,6 +263,42 @@ export default function Withdraw() {
             </>
           )}
 
+          {/* E-wallet (PayPal) fields */}
+          {withdrawMethod === 'ewallet' && (
+            <>
+              <label>
+                <span>PayPal Email Address</span>
+                <input 
+                  type="email" 
+                  value={withdrawDetails.paypalEmail || ''} 
+                  onChange={(e) => setWithdrawDetails({ ...withdrawDetails, paypalEmail: e.target.value })} 
+                  placeholder="your.email@example.com" 
+                />
+              </label>
+              <div className="muted-text" style={{ fontSize: '0.9rem', marginTop: '-8px', marginBottom: '16px' }}>
+                Ensure this is the email associated with your PayPal account
+              </div>
+            </>
+          )}
+
+          {/* Cryptocurrency fields */}
+          {withdrawMethod === 'crypto' && (
+            <>
+              <label>
+                <span>Crypto</span>
+                <select onChange={(e) => setWithdrawDetails({ ...withdrawDetails, crypto: e.target.value })} value={withdrawDetails.crypto || ''}>
+                  <option value="">Select crypto</option>
+                  <option value="Bitcoin">Bitcoin</option>
+                  <option value="Ethereum">Ethereum</option>
+                </select>
+              </label>
+              <label>
+                <span>Wallet address</span>
+                <input value={withdrawDetails.walletAddress || ''} onChange={(e) => setWithdrawDetails({ ...withdrawDetails, walletAddress: e.target.value })} placeholder="Wallet address" />
+              </label>
+            </>
+          )}
+
           <div className="actions">
             <button className="btn" onClick={handleCreatePreview} disabled={loadingWithdraw || !data.timerActive || Number(data.balance) < 1}>
               {loadingWithdraw ? 'Processing...' : 'Next'}
@@ -283,4 +311,4 @@ export default function Withdraw() {
       </div>
     </div>
   );
-}
+    }
